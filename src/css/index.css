@@ -1,11 +1,12 @@
 /* Root */
 :root {
-    --color01: #fafafa;
-    --color02: #f1f1f1;
-    --color03: #cccccc;
-    --color04: #4f63d6;
-    --color05: #3e54b9;
-    --color06: #313131;
+    --color01: #ffffff;
+    --color02: #fafafa;
+    --color03: #f1f1f1;
+    --color04: #cccccc;
+    --color05: #4f63d6;
+    --color06: #3e54b9;
+    --color07: #313131;
 }
 
 /* Font Import */
@@ -20,8 +21,8 @@
 body, html {
     overflow-x: hidden;
     font-family: 'Poppins', Arial, Helvetica, sans-serif;
-    background-color: var(--color01);
-    color: var(--color06);
+    background-color: var(--color02);
+    color: var(--color07);
 }
 
 /* Text */
@@ -47,10 +48,14 @@ h1 {
 
 /* ToDo */
 .todo {
-    background-color: var(--color01);
+    background-color: var(--color02);
     height: 100vh;
     overflow: auto;
     padding: 30px 0;
+}
+
+.todo .todo-list {
+    margin-top: 25px;
 }
 
 .todo .todo-list ul {
@@ -61,6 +66,17 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    transition: .4s;
+    border-bottom: 1px solid var(--color03);
+}
+
+.todo .todo-list ul li:last-child {
+    border: 0;
+}
+
+.todo .todo-list ul li:hover {
+    background-color: #fff;
 }
 
 .todo .todo-list ul li .todo-name {
@@ -71,11 +87,11 @@ h1 {
 
 .todo .todo-list ul li .todo-check ~ .todo-name span {
     position: relative;
-    transition: .2s;
+    transition: .4s;
 }
 
 .todo .todo-list ul li .todo-check:checked ~ .todo-name span {
-    color: var(--color03);
+    color: var(--color04);
 }
 
 .todo .todo-list ul li .todo-check:checked ~ .todo-name span:before {
@@ -85,26 +101,33 @@ h1 {
 .todo .todo-list ul li .todo-check ~ .todo-name span:before {
     content: "";
     height: 2px;
-    background-color: var(--color03);
+    background-color: var(--color04);
     display: block;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     width: 0;
-    transition: .2s;
+    transition: .4s;
 }
 
 .todo .todo-list ul li .todo-btn {
     border: 0;
     background-color: transparent;
-    padding: 0;
+    padding: 2px;
+    text-align: center;
     width: 20px;
     height: 20px;
-    color: var(--color03);
+    color: var(--color04);
+    cursor: pointer;
+}
+
+.todo .todo-list ul li .todo-btn:hover img {
+    opacity: 0.5;
 }
 
 .todo .todo-list ul li .todo-btn img {
-    opacity: 0.5;
+    opacity: 0.25;
+    transition: .4s;
 }
 
 .todo .todo-list ul li .todo-check {
@@ -120,14 +143,14 @@ h1 {
     height: 20px;
     top: -5px;
     left: 0;
-    background-color: var(--color02);
-    border: 1px solid var(--color03);
-    transition: .2s;
+    background-color: var(--color03);
+    border: 1px solid var(--color04);
+    transition: .4s;
 }
 
 .todo .todo-list ul li .todo-check:checked:before {
-    background-color: var(--color04);
-    border-color: var(--color05);
+    background-color: var(--color05);
+    border-color: var(--color07);
 }
 
 .todo .todo-list ul li .todo-check:checked:after {
@@ -140,7 +163,7 @@ h1 {
     display: block;
     width: 5px;
     height: 10px;
-    border: solid var(--color01);
+    border: solid var(--color02);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg) scale(0);
     position: absolute;
@@ -152,7 +175,7 @@ h1 {
 
 /* Pomodoro */
 .pomodoro {
-    background-color: var(--color02);
+    background-color: var(--color03);
     padding: 30px 0;
     height: 100vh;
     overflow: auto;
