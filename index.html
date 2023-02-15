@@ -10,19 +10,26 @@
     <title>PoToDo</title>
 </head>
 <body>
+    <li id="todo-item-template" class="todo-item">
+        <input type="checkbox" name="" id="" class="todo-check">
+        <label for="" class="todo-name"><span>{{name}}</span></label>
+        <button class="todo-btn todo-play">
+            <img src="./src/svg/play.svg" alt="Iniciar tarefa" title="Iniciar tarefa">
+        </button>
+        <button class="todo-btn todo-trash">
+            <img src="./src/svg/trash.svg" alt="Excluir tarefa" title="Excluir tarefa">
+        </button>
+    </li>
+
     <div class="grids">
         <div class="todo">
             <div class="container">
                 <h1>ToDo List</h1>
                 <div class="todo-list">
+                    <form id="todo-add">
+                        <input type="text" name="name" required placeholder="Criar tarefa">
+                    </form>
                     <ul>
-                        <li>
-                            <input type="checkbox" name="todo1" id="todo1" class="todo-check">
-                            <label for="todo1" class="todo-name"><span>Nome da tarefa</span></label>
-                            <button class="todo-btn">
-                                <img src="./src/svg/trash.svg" alt="Excluir tarefa" title="Excluir tarefa">
-                            </button>
-                        </li>
                     </ul>
                 </div>
             </div>

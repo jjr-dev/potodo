@@ -16,13 +16,14 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
 body, html {
-    overflow-x: hidden;
-    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    overflow: hidden;
     background-color: var(--color02);
-    color: var(--color07);
+    color: var(--color07); 
 }
 
 /* Text */
@@ -49,7 +50,7 @@ h1 {
 /* ToDo */
 .todo {
     background-color: var(--color02);
-    height: 100vh;
+    height: 100vh;calc(100vh - 60px);
     overflow: auto;
     padding: 30px 0;
 }
@@ -69,6 +70,7 @@ h1 {
     padding: 10px;
     transition: .4s;
     border-bottom: 1px solid var(--color03);
+    overflow: hidden;
 }
 
 .todo .todo-list ul li:last-child {
@@ -77,6 +79,7 @@ h1 {
 
 .todo .todo-list ul li:hover {
     background-color: #fff;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
 }
 
 .todo .todo-list ul li .todo-name {
@@ -113,22 +116,39 @@ h1 {
 .todo .todo-list ul li .todo-btn {
     border: 0;
     background-color: transparent;
-    padding: 2px;
+    padding: 5px 0;
     text-align: center;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     color: var(--color04);
     cursor: pointer;
+    margin-left: 7px;
+    border-radius: 50%;
+    transform: translate(300%);
+    transition: .3s;
 }
 
-.todo .todo-list ul li .todo-btn:hover img {
-    opacity: 0.5;
+.todo .todo-list ul li:hover .todo-btn {
+    transform: translate(0);
 }
 
-.todo .todo-list ul li .todo-btn img {
-    opacity: 0.25;
-    transition: .4s;
+.todo .todo-list ul li .todo-btn:hover {
+    transform: scale(1.25);
 }
+
+.todo .todo-list ul li .todo-btn.todo-play {
+    background-color: var(--color05);
+}
+
+.todo .todo-list ul li .todo-btn.todo-trash {
+    background-color: var(--color07);
+    padding: 6px 0;
+}
+
+.todo .todo-list ul li .todo-btn.todo-trash img {
+    width: 13px;
+}
+
 
 .todo .todo-list ul li .todo-check {
     position: relative;
@@ -171,6 +191,27 @@ h1 {
     top: -2px;
     transition: .2s;
     margin-top: 3px;
+}
+
+#todo-item-template {
+    display: none;
+}
+
+.todo form#todo-add {
+    margin-bottom: 10px;
+}
+
+/* Input Text */
+input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--color04);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+input[type="text"]:focus {
+    outline: 0;
 }
 
 /* Pomodoro */
