@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="src/index.css">
+    <link rel="stylesheet" href="./src/css/index.css">
 
     <title>PoToDo</title>
 </head>
@@ -14,6 +14,17 @@
         <div class="todo">
             <div class="container">
                 <h1>ToDo List</h1>
+                <div class="todo-list">
+                    <ul>
+                        <li>
+                            <input type="checkbox" name="todo1" id="todo1" class="todo-check">
+                            <label for="todo1" class="todo-name"><span>Nome da tarefa</span></label>
+                            <button class="todo-btn">
+                                <img src="./src/svg/trash.svg" alt="Excluir" title="Excluir">
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="pomodoro">
@@ -22,6 +33,6 @@
             </div>
         </div>
     </div>
-    <script src="src/index.js"></script>
+    <script src="./src/js/index.js"></script>
 </body>
 </html>
