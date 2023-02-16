@@ -25,9 +25,14 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     });
 
     e.target.querySelector('input[name="name"]').value = "";
+    document.querySelector('form#todo-add button[type="submit"]').disabled = true;
 
     saveToDo();
 })
+
+document.querySelector('form#todo-add input[name="name"]').onkeyup = function() {
+    document.querySelector('form#todo-add button[type="submit"]').disabled = this.value.length == 0;
+}
 
 function saveToDo() {
     const todos = [];
@@ -76,6 +81,10 @@ function addToDo(task) {
             saveToDo();
         }
     })
+
+    template.querySelector('.todo-check').onchange = () => {
+        saveToDo()
+    };
     
     document.querySelector(".todo-list ul").prepend(template);
 }
