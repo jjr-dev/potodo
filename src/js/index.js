@@ -69,7 +69,42 @@ document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = fun
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-reset').onclick = function() {
-    resetTimer(25 * 60);
+    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
+    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
+    resetTimer(stages[stage].minutes * 60);
+}
+
+document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = function() {
+    let stage = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
+    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
+    if(stage > 0)
+        stage --;
+    
+    localStorage.setItem('potodo-pomodoro-stage', stage);
+    
+    resetTimer(stages[stage].minutes * 60);
+
+    const body =  document.querySelector('body');
+    body.removeAttribute('class');
+    body.classList.add(`theme-${stages[stage].type}`)
+}
+
+document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
+    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
+    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
+    if(stage < stages.length - 1)
+        stage ++;
+    
+    localStorage.setItem('potodo-pomodoro-stage', stage);
+
+    resetTimer(stages[stage].minutes * 60);
+
+    const body =  document.querySelector('body');
+    body.removeAttribute('class');
+    body.classList.add(`theme-${stages[stage].type}`)
 }
 
 function configPomodoroStages() {
@@ -85,7 +120,8 @@ function configPomodoroStages() {
                 long: 15,
             },
             length: 4,
-            auto: true
+            auto: true,
+            reset: true
         };
 
         localStorage.setItem('potodo-pomodoro-configs', JSON.stringify(configs));
@@ -182,6 +218,9 @@ function startTimer(seconds) {
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
 
+    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
+    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
     timer = setInterval(() => {
         seconds --;
 
@@ -195,13 +234,11 @@ function startTimer(seconds) {
             minutes = 0;
             seconds = 0;
 
-            let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
-            const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
             let ended = false;
             if(stage == stages.length - 1) {
                 ended = true;
-                console.log("ACABOU");
+                
+                setTitle("PoToDo");
             }
 
             stage = stage < stages.length - 1 ? stage + 1 : 0;
@@ -212,7 +249,11 @@ function startTimer(seconds) {
             localStorage.setItem('potodo-pomodoro-stage', stage);
 
             const configs = JSON.parse(localStorage.getItem('potodo-pomodoro-configs'));
+
             if(!ended && configs.auto)
+                startTimer(s.minutes * 60);
+
+            if(ended && configs.reset)
                 startTimer(s.minutes * 60);
 
             const body =  document.querySelector('body');
@@ -232,8 +273,11 @@ function startTimer(seconds) {
             document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
     
             localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
+
+            const type = stages[stage].type;
+            setTitle(`${type[0].toUpperCase() + type.substring(1)} - ${str.minutes}:${str.seconds}`)
         }
-    }, 1)
+    }, 1000)
 }
 
 function pauseTimer() {
@@ -256,4 +300,8 @@ function resetTimer(seconds) {
     document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
 
     localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
+}
+
+function setTitle(title) {
+    document.querySelector('title').textContent = title;
 }
