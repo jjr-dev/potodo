@@ -282,7 +282,7 @@ function startTimer(seconds) {
         }
 
         save();
-    }, 100)
+    }, 1000)
 }
 
 function pauseTimer() {
@@ -308,7 +308,7 @@ function resetTimer(seconds) {
 }
 
 function setTitle(title) {
-    // document.querySelector('title').textContent = title;
+    document.querySelector('title').textContent = title;
 }
 
 function setPomodoroTheme() {
