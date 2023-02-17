@@ -1,12 +1,33 @@
+let timer;
+
 document.addEventListener("DOMContentLoaded", () => {
-    let todos = localStorage.getItem('todo-list');
+    let todos = localStorage.getItem('potodo-todo-list');
+    todos = todos ? JSON.parse(todos) : [];
 
-    todos = JSON.parse(todos);
     todos.reverse();
-
     todos.map((todo) => {
         addToDo(todo);
     })
+
+    let stages = localStorage.getItem('potodo-pomodoro-stages');
+    stages = stages ? JSON.parse(stages) : configPomodoroStages();
+
+    let stage = localStorage.getItem('potodo-pomodoro-stage')
+    if(!stage)
+        localStorage.setItem('potodo-pomodoro-stage', 0);
+
+    let t = localStorage.getItem('potodo-pomodoro-timer');
+    if(!t) {
+        t = {
+            minutes: stages[0].minutes < 10 ? `0${stages[0].minutes}` : stages[0].minutes,
+            seconds: "00"
+        }
+    } else {
+        t = JSON.parse(t);
+    }
+
+    document.querySelector('.pomodoro-timer-minutes').textContent = t.minutes;
+    document.querySelector('.pomodoro-timer-seconds').textContent = t.seconds;
 });
 
 document.querySelector('form#todo-add').addEventListener('submit', (e) => {
@@ -34,6 +55,64 @@ document.querySelector('form#todo-add input[name="name"]').onkeyup = function() 
     document.querySelector('form#todo-add button[type="submit"]').disabled = this.value.length == 0;
 }
 
+document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = function() {
+    let t = localStorage.getItem('potodo-pomodoro-timer');
+    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
+    t = !t ? { minutes: stages[0].minutes, seconds: 0 } : JSON.parse(t);
+    
+    startTimer(parseInt(t.minutes) * 60 + parseInt(t.seconds));
+}
+
+document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
+    pauseTimer();
+}
+
+document.querySelector('.pomodoro-actions .pomodoro-action-reset').onclick = function() {
+    resetTimer(25 * 60);
+}
+
+function configPomodoroStages() {
+    let configs = localStorage.getItem('potodo-pomodoro-configs');
+
+    if(configs) {
+        configs = JSON.parse(configs);
+    } else {
+        configs = {
+            focus: 25,
+            break: {
+                short: 5,
+                long: 15,
+            },
+            length: 4,
+            auto: true
+        };
+
+        localStorage.setItem('potodo-pomodoro-configs', JSON.stringify(configs));
+    }
+
+    let stages = [];
+    for(let i = 1; i <= configs.length; i++) {
+        let stage = [];
+
+        stage.push({
+            type: 'focus',
+            minutes: configs.focus,
+        });
+
+        stage.push({
+            type: 'break',
+            minutes: i != configs.length ? configs.break.short : configs.break.long,
+        })
+
+        stages = stages.concat(stage)
+    }
+
+    localStorage.setItem('potodo-pomodoro-stages', JSON.stringify(stages))
+
+    return stages;
+}
+
 function saveToDo() {
     const todos = [];
 
@@ -45,7 +124,7 @@ function saveToDo() {
         })
     });
     
-    localStorage.setItem('todo-list', JSON.stringify(todos));
+    localStorage.setItem('potodo-todo-list', JSON.stringify(todos));
 }
 
 function getFormData(form) {
@@ -75,6 +154,13 @@ function addToDo(task) {
     if(task.checked)
         template.querySelector('.todo-check').checked = true;
 
+    template.querySelector('.todo-name').onclick = function(e) {
+        e.preventDefault();
+
+        // Informações sobre a tarefa em breve
+        console.log(this);
+    }
+
     template.querySelector(".todo-btn.todo-trash").addEventListener("click", () => {
         if(confirm("Excluir tarefa?")) {
             template.remove();
@@ -87,4 +173,87 @@ function addToDo(task) {
     };
     
     document.querySelector(".todo-list ul").prepend(template);
+}
+
+function startTimer(seconds) {
+    if(timer)
+        return;
+
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+
+    timer = setInterval(() => {
+        seconds --;
+
+        if(seconds <= 0) {
+            seconds = 59;
+            minutes --;
+        }
+
+        if(minutes < 0) {
+            pauseTimer();
+            minutes = 0;
+            seconds = 0;
+
+            let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
+            const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
+
+            let ended = false;
+            if(stage == stages.length - 1) {
+                ended = true;
+                console.log("ACABOU");
+            }
+
+            stage = stage < stages.length - 1 ? stage + 1 : 0;
+
+            let s = stages[stage];
+            resetTimer(s.minutes * 60);
+
+            localStorage.setItem('potodo-pomodoro-stage', stage);
+
+            const configs = JSON.parse(localStorage.getItem('potodo-pomodoro-configs'));
+            if(!ended && configs.auto)
+                startTimer(s.minutes * 60);
+
+            const body =  document.querySelector('body');
+            body.removeAttribute('class');
+            body.classList.add(`theme-${s.type}`)
+
+            document.querySelector('.pomodoro-stage-focus').style.display = 'none';
+            document.querySelector('.pomodoro-stage-break').style.display = 'none';
+            document.querySelector(`.pomodoro-stage-${s.type}`).style.display = 'block';
+        } else {
+            const str = {
+                minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
+                seconds: `${seconds < 10 ? `0${seconds}` : seconds}`
+            };
+    
+            document.querySelector('.pomodoro-timer-minutes').textContent = str.minutes;
+            document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
+    
+            localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
+        }
+    }, 1)
+}
+
+function pauseTimer() {
+    clearInterval(timer);
+    timer = null;
+}
+
+function resetTimer(seconds) {
+    pauseTimer();
+    
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+
+    const str = {
+        minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
+        seconds: `${seconds < 10 ? `0${seconds}` : seconds}`
+    };
+
+    document.querySelector('.pomodoro-timer-minutes').textContent = str.minutes;
+    document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
+
+    localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
 }

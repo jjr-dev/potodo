@@ -6,17 +6,19 @@
     --color04: #cccccc;
     --color05: #4f63d6;
     --color06: #3e54b9;
-    --color07: #313131;
+    --color07: #3eb99e;
+    --color08: #2e9645;
+    --color09: #313131;
 }
 
 /* Font Import */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300;8..144,500;8..144,600;8..144,800&display=swap');
 
 /* Resets */
 * {
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', 'Roboto Flex', Arial, Helvetica, sans-serif;
     box-sizing: border-box;
     font-size: 16px;
 }
@@ -24,12 +26,12 @@
 body, html {
     overflow: hidden;
     background-color: var(--color02);
-    color: var(--color07); 
+    color: var(--color09); 
 }
 
 /* Text */
 h1 {
-    font-size: 22px;
+    font-size: 1.4rem;
     font-weight: 600;
 }
 
@@ -51,13 +53,13 @@ h1 {
 /* ToDo */
 .todo {
     background-color: var(--color02);
-    height: calc(100vh - 60px);
+    height: 100vh;
     overflow: auto;
-    padding: 30px 0;
+    padding: 2rem 0;
 }
 
-.todo .todo-list {
-    margin-top: 25px;
+.todo .todo-header {
+    margin-bottom: 1.7rem;
 }
 
 .todo .todo-list ul {
@@ -68,7 +70,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 0.7rem;
     transition: .4s;
     border-bottom: 1px solid var(--color03);
     overflow: hidden;
@@ -80,12 +82,13 @@ h1 {
 
 .todo .todo-list ul li:hover {
     background-color: #fff;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 0 0.6rem 0 rgba(0,0,0,0.1);
+    border-radius: 0.3rem;
 }
 
 .todo .todo-list ul li .todo-name {
     flex: 1;
-    margin-left: 20px;
+    margin-left: 1.4rem;
     cursor: pointer;
 }
 
@@ -104,7 +107,7 @@ h1 {
 
 .todo .todo-list ul li .todo-check ~ .todo-name span:before {
     content: "";
-    height: 2px;
+    height: 0.125rem;
     background-color: var(--color04);
     display: block;
     position: absolute;
@@ -117,13 +120,13 @@ h1 {
 .todo .todo-list ul li .todo-btn {
     border: 0;
     background-color: transparent;
-    padding: 5px 0;
+    padding: 0.2rem 0;
     text-align: center;
-    width: 25px;
-    height: 25px;
+    width: 1.6rem;
+    height: 1.6rem;
     color: var(--color04);
     cursor: pointer;
-    margin-left: 7px;
+    margin-left: 0.35rem;
     border-radius: 50%;
     transform: translate(300%);
     transition: .3s;
@@ -138,17 +141,21 @@ h1 {
     transform: scale(1.25);
 }
 
-.todo .todo-list ul li .todo-btn.todo-play {
+.theme-focus .todo .todo-list ul li .todo-btn.todo-play {
     background-color: var(--color05);
 }
 
-.todo .todo-list ul li .todo-btn.todo-trash {
+.theme-break .todo .todo-list ul li .todo-btn.todo-play {
     background-color: var(--color07);
-    padding: 6px 0;
+}
+
+.todo .todo-list ul li .todo-btn.todo-trash {
+    background-color: var(--color09);
+    padding: 0.3rem 0;
 }
 
 .todo .todo-list ul li .todo-btn.todo-trash img {
-    width: 13px;
+    width: 0.8rem;
 }
 
 
@@ -161,20 +168,28 @@ h1 {
     content: "";
     display: block;
     position: absolute;
-    width: 20px;
-    height: 20px;
-    top: -5px;
+    width: 1.3rem;
+    height: 1.3rem;
+    top: -0.3rem;
     left: 0;
     background-color: var(--color03);
     border: 1px solid var(--color04);
     transition: .4s;
-    border-radius: 5px;
+    border-radius: 0.3rem;
 }
 
 .todo .todo-list ul li .todo-check:checked:before {
+    border-radius: 0.3rem;
+}
+
+.theme-focus .todo .todo-list ul li .todo-check:checked:before {
     background-color: var(--color05);
-    border-color: var(--color07);
-    border-radius: 5px;
+    border-color: var(--color06);
+}
+
+.theme-break .todo .todo-list ul li .todo-check:checked:before {
+    background-color: var(--color07);
+    border-color: var(--color08);
 }
 
 .todo .todo-list ul li .todo-check:checked:after {
@@ -185,16 +200,16 @@ h1 {
 .todo .todo-list ul li .todo-check:after {
     content: "";
     display: block;
-    width: 5px;
-    height: 10px;
+    width: 0.3rem;
+    height: 0.7rem;
     border: solid var(--color02);
-    border-width: 0 2px 2px 0;
+    border-width: 0 0.15rem 0.15rem 0;
     transform: rotate(45deg) scale(0);
     position: absolute;
-    left: 7px;
-    top: -2px;
+    left: 0.5rem;
+    top: -0.1rem;
     transition: .2s;
-    margin-top: 3px;
+    margin-top: 0.05rem;
 }
 
 #todo-item-template {
@@ -202,24 +217,35 @@ h1 {
 }
 
 .todo form#todo-add {
-    margin-bottom: 10px;
+    margin-bottom: 0.7rem;
     display: flex;
-    gap: 15px;
+    gap: 1rem;
 }
 
 /* Button */
 .btn {
     border: 0;
-    border-radius: 5px;
-    background-color: var(--color05);
+    border-radius: 0.3rem;
     color: var(--color01);
-    padding: 5px 15px;
+    padding: 0.3rem 1rem;
     transition: .2s;
     cursor: pointer;
 }
 
-.btn:not(:disabled):hover {
+.theme-focus .btn {
+    background-color: var(--color05);
+}
+
+.theme-break .btn {
+    background-color: var(--color07);
+}
+
+.theme-focus .btn:not(:disabled):hover {
     background-color: var(--color06);
+}
+
+.theme-break .btn:not(:disabled):hover {
+    background-color: var(--color08);
 }
 
 .btn:disabled {
@@ -230,8 +256,8 @@ h1 {
 input[type="text"] {
     width: 100%;
     border: 1px solid var(--color04);
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 0.3rem;
+    padding: 0.65rem;
 }
 
 input[type="text"]:focus {
@@ -241,7 +267,98 @@ input[type="text"]:focus {
 /* Pomodoro */
 .pomodoro {
     background-color: var(--color03);
-    padding: 30px 0;
+    padding: 2rem 0;
     height: 100vh;
     overflow: auto;
+}
+
+.pomodoro-header {
+    margin-bottom: 1.7rem;
+}
+
+.pomodoro-stopwatch {
+    width: fit-content;
+    min-width: 14rem;
+}
+
+.theme-focus .pomodoro-timer {
+    background-color: var(--color05);
+}
+
+.theme-break .pomodoro-timer {
+    background-color: var(--color07);
+}
+
+.pomodoro-timer {
+    padding: 2rem 1rem;
+    border-radius: 0.3rem;
+    width: fit-content;
+    color: var(--color01);
+    width: 100%;
+    text-align: center;
+    transition: .2s;
+}
+
+.pomodoro-timer h1 {
+    font-size: 8rem;
+    line-height: 8rem;
+    font-weight: 500;
+    font-family: 'Roboto Flex', sans-serif;
+}
+
+.pomodoro-stages {
+    margin-top: 0.5rem;
+}
+
+.pomodoro-stage {
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    padding: 0.8rem;
+    font-size: 1.25rem;
+    font-weight: 400;
+    position: relative;
+    overflow: hidden;
+}
+
+.pomodoro-stage.pomodoro-stage-focus {
+    border: 2px solid var(--color05);
+    color: var(--color05);
+}
+
+.pomodoro-stage.pomodoro-stage-break {
+    border: 2px solid var(--color07);
+    color: var(--color08);
+}
+
+.pomodoro-stage.pomodoro-stage.pomodoro-stage-focus svg {
+    fill: var(--color05);
+}
+
+.pomodoro-stage.pomodoro-stage.pomodoro-stage-break svg {
+    fill: var(--color07);
+}
+
+.pomodoro-stage svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 3rem;
+    opacity: 0.15;
+    transition: .2s;
+}
+
+.pomodoro-stage:hover svg {
+    width: 6rem;
+}
+
+.pomodoro-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.pomodoro-actions .btn {
+    width: 100%;
 }
