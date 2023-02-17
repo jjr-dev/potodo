@@ -117,16 +117,34 @@ document.querySelector('.pomodoro-actions .pomodoro-action-reset').onclick = fun
 
 document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = function() {
     stage = stage > 0 ? stage - 1 : stages.length - 1;
+
+    timer = {
+        minutes: stages[stage].minutes,
+        seconds: 0
+    }
     
-    resetTimer(stages[stage].minutes * 60);
+    resetTimer(timer.minutes * 60);
     setPomodoroTheme();
+
+    pauseTimer();
+
+    save();
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
     stage = stage < stages.length - 1 ? stage + 1 : 0;
-    
-    resetTimer(stages[stage].minutes * 60);
+
+    timer = {
+        minutes: stages[stage].minutes,
+        seconds: 0
+    }
+
+    resetTimer(timer.minutes * 60);
     setPomodoroTheme();
+
+    pauseTimer();
+
+    save();
 }
 
 function saveToDo() {
@@ -246,6 +264,9 @@ function startTimer(seconds) {
 }
 
 function pauseTimer() {
+    configs.paused = true;
+    togglePaused();
+
     clearInterval(stopwatch);
     stopwatch = null;
 }

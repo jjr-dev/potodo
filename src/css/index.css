@@ -7,7 +7,7 @@
     --color05: #4f63d6;
     --color06: #3e54b9;
     --color07: #3eb99e;
-    --color08: #2e9645;
+    --color08: #1aa587;
     --color09: #313131;
 }
 
@@ -279,6 +279,7 @@ input[type="text"]:focus {
 .pomodoro-stopwatch {
     width: fit-content;
     min-width: 14rem;
+    position: relative;
 }
 
 .theme-focus .pomodoro-timer {
@@ -301,8 +302,8 @@ input[type="text"]:focus {
 
 .pomodoro-timer h1 {
     font-size: 8rem;
-    line-height: 8rem;
-    font-weight: 500;
+    line-height: 7.5rem;
+    font-weight: 600;
     font-family: 'Roboto Flex', sans-serif;
 }
 
@@ -382,4 +383,37 @@ input[type="text"]:focus {
 
 .pomodoro-actions .pomodoro-action-pause {
     display: none;
+}
+
+.pomodoro-actions .pomodoro-action-reset {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+.theme-focus .pomodoro-actions .pomodoro-action-reset {
+    background-color: var(--color06);
+    border: 2px solid var(--color06);
+}
+
+.theme-focus .pomodoro-actions .pomodoro-action-reset:hover {
+    background-color: var(--color05);
+}
+
+.theme-break .pomodoro-actions .pomodoro-action-reset {
+    background-color: var(--color08);
+    border: 2px solid var(--color08);
+}
+
+.theme-break .pomodoro-actions .pomodoro-action-reset:hover {
+    background-color: var(--color07);
+}
+
+.pomodoro-actions .pomodoro-action-reset svg {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.3rem;
 }
