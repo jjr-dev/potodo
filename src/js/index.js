@@ -63,11 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
         addToDo(todo);
     })
 
-    if(!configs.paused) {
-        startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
-        togglePaused();
-    }
-
     setPomodoroTheme();
     save();
 });
@@ -242,14 +237,17 @@ function startTimer(seconds) {
 
             resetTimer(stages[stage].minutes * 60);
 
-            if(!ended && configs.auto)
+            if(!ended && configs.auto) {
                 startTimer(stages[stage].minutes * 60);
+                configs.paused = false;
+            }
 
             if(ended && configs.reset)
                 startTimer(stages[stage].minutes * 60);
 
             newPomodoroSound();
             setPomodoroTheme();
+            togglePaused();
         } else {
             timer = {
                 minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
