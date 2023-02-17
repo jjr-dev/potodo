@@ -278,7 +278,7 @@ function startTimer(seconds) {
             setPomodoroTimer();
     
             const type = stages[stage].type;
-            setTitle(`${type[0].toUpperCase() + type.substring(1)} - ${timer.minutes}:${timer.seconds}`)
+            setTitle(`${type == 'focus' ? "Foco" : "Intervalo"} - ${timer.minutes}:${timer.seconds}`)
         }
 
         save();
