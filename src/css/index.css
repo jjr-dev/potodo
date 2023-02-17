@@ -371,3 +371,15 @@ input[type="text"]:focus {
 .pomodoro-actions .btn {
     width: 100%;
 }
+
+.pomodoro-actions .btn svg {
+    fill: var(--color01);
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.4rem;
+}
+
+.pomodoro-actions .pomodoro-action-pause {
+    display: none;
+}

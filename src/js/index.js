@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             length: 4,
             auto: true,
-            reset: true
+            reset: true,
+            paused: true
         };
     } else {
         configs = JSON.parse(configs);
@@ -62,6 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
         addToDo(todo);
     })
 
+    if(!configs.paused) {
+        startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
+        togglePaused();
+    }
+
     setPomodoroTheme();
     save();
 });
@@ -92,10 +98,16 @@ document.querySelector('form#todo-add input[name="name"]').onkeyup = function() 
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = function() {
+    configs.paused = false;
+    togglePaused();
+
     startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
+    configs.paused = true;
+    togglePaused();
+    
     pauseTimer();
 }
 
@@ -262,6 +274,13 @@ function setPomodoroTheme() {
     body.classList.add(`theme-${stages[stage].type}`)
 
     document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
+}
+
+function togglePaused() {
+    document.querySelector('.pomodoro-actions .pomodoro-action-pause').style.display = configs.paused ? 'none' : 'block';
+    document.querySelector('.pomodoro-actions .pomodoro-action-play').style.display  = configs.paused ? 'block' : 'none';
+
+    save();
 }
 
 function setPomodoroTimer() {
