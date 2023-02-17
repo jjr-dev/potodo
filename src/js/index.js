@@ -89,6 +89,10 @@ document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = 
     const body =  document.querySelector('body');
     body.removeAttribute('class');
     body.classList.add(`theme-${stages[stage].type}`)
+
+    document.querySelector('.pomodoro-stage-focus').style.display = 'none';
+    document.querySelector('.pomodoro-stage-break').style.display = 'none';
+    document.querySelector(`.pomodoro-stage-${stages[stage].type}`).style.display = 'block';
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
@@ -105,6 +109,10 @@ document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = func
     const body =  document.querySelector('body');
     body.removeAttribute('class');
     body.classList.add(`theme-${stages[stage].type}`)
+
+    document.querySelector('.pomodoro-stage-focus').style.display = 'none';
+    document.querySelector('.pomodoro-stage-break').style.display = 'none';
+    document.querySelector(`.pomodoro-stage-${stages[stage].type}`).style.display = 'block';
 }
 
 function configPomodoroStages() {
