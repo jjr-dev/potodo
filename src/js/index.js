@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelector('.pomodoro-timer-minutes').textContent = t.minutes;
     document.querySelector('.pomodoro-timer-seconds').textContent = t.seconds;
+
+    // TODO: Verificar estágio atual para modificar o tema
 });
 
 document.querySelector('form#todo-add').addEventListener('submit', (e) => {
@@ -79,8 +81,7 @@ document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = 
     let stage = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
     const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
 
-    if(stage > 0)
-        stage --;
+    stage = stage > 0 ? stage - 1 : stages.length - 1;
     
     localStorage.setItem('potodo-pomodoro-stage', stage);
     
@@ -90,17 +91,14 @@ document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = 
     body.removeAttribute('class');
     body.classList.add(`theme-${stages[stage].type}`)
 
-    document.querySelector('.pomodoro-stage-focus').style.display = 'none';
-    document.querySelector('.pomodoro-stage-break').style.display = 'none';
-    document.querySelector(`.pomodoro-stage-${stages[stage].type}`).style.display = 'block';
+    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
     let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
     const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
 
-    if(stage < stages.length - 1)
-        stage ++;
+    stage = stage < stages.length - 1 ? stage + 1 : 0;
     
     localStorage.setItem('potodo-pomodoro-stage', stage);
 
@@ -110,9 +108,7 @@ document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = func
     body.removeAttribute('class');
     body.classList.add(`theme-${stages[stage].type}`)
 
-    document.querySelector('.pomodoro-stage-focus').style.display = 'none';
-    document.querySelector('.pomodoro-stage-break').style.display = 'none';
-    document.querySelector(`.pomodoro-stage-${stages[stage].type}`).style.display = 'block';
+    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
 }
 
 function configPomodoroStages() {

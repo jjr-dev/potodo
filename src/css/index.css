@@ -315,28 +315,37 @@ input[type="text"]:focus {
     text-align: center;
     border-radius: 5px;
     padding: 0.8rem;
-    font-size: 1.25rem;
-    font-weight: 400;
     position: relative;
     overflow: hidden;
 }
 
-.pomodoro-stage.pomodoro-stage-focus {
+.pomodoro-stage span {
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+
+.theme-focus .pomodoro-stage {
     border: 2px solid var(--color05);
     color: var(--color05);
 }
 
-.pomodoro-stage.pomodoro-stage-break {
+.theme-break .pomodoro-stage {
     border: 2px solid var(--color07);
     color: var(--color08);
 }
 
-.pomodoro-stage.pomodoro-stage.pomodoro-stage-focus svg {
-    fill: var(--color05);
+.pomodoro-stage svg {
+    display: none;
 }
 
-.pomodoro-stage.pomodoro-stage.pomodoro-stage-break svg {
+.theme-focus .pomodoro-stage svg.icon-focus {
+    fill: var(--color05);
+    display: block;
+}
+
+.theme-break .pomodoro-stage svg.icon-break {
     fill: var(--color07);
+    display: block;
 }
 
 .pomodoro-stage svg {
