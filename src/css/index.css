@@ -385,6 +385,10 @@ input[type="text"]:focus {
     display: none;
 }
 
+.pomodoro-actions .pomodoro-action-play svg, .pomodoro-actions .pomodoro-action-pause svg {
+    transform: scale(1.5);
+}
+
 .pomodoro-actions .pomodoro-action-reset {
     position: absolute;
     right: 5px;

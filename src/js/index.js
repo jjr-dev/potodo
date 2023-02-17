@@ -65,6 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setPomodoroTheme();
     save();
+
+    verifyNotification();
 });
 
 document.querySelector('form#todo-add').addEventListener('submit', (e) => {
@@ -235,19 +237,38 @@ function startTimer(seconds) {
 
             stage = stage < stages.length - 1 ? stage + 1 : 0;
 
-            resetTimer(stages[stage].minutes * 60);
+            const min = parseInt(stages[stage].minutes);
+
+            resetTimer(min * 60);
 
             if(!ended && configs.auto) {
-                startTimer(stages[stage].minutes * 60);
+                startTimer(min * 60);
                 configs.paused = false;
             }
 
             if(ended && configs.reset)
-                startTimer(stages[stage].minutes * 60);
+                startTimer(min * 60);
 
             newPomodoroSound();
             setPomodoroTheme();
             togglePaused();
+
+            let notify;
+            if(stages[stage].type == 'focus') {
+                notify = {
+                    title: 'Foco!',
+                    body: `Dê tudo de si por ${min} ${min > 1 ? 'minutos' : 'minuto'}!`,
+                    image: `./src/img/notify-focus.png`,
+                }
+            } else {
+                notify = {
+                    title: 'Intervalo!',
+                    body: `Relaxe e se distraia por ${min} ${min > 1 ? 'minutos' : 'minuto'}!`,
+                    image: `./src/img/notify-break.png`,
+                }
+            }
+
+            newNotification(notify.title, notify);
         } else {
             timer = {
                 minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
@@ -261,7 +282,7 @@ function startTimer(seconds) {
         }
 
         save();
-    }, 10)
+    }, 100)
 }
 
 function pauseTimer() {
@@ -295,7 +316,7 @@ function setPomodoroTheme() {
     body.removeAttribute('class');
     body.classList.add(`theme-${stages[stage].type}`)
 
-    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
+    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Intervalo';
 }
 
 function togglePaused() {
@@ -322,4 +343,27 @@ function save() {
     localStorage.setItem('potodo-timer', JSON.stringify(timer));
     localStorage.setItem('potodo-todos', JSON.stringify(todos));
     localStorage.setItem('potodo-stage', stage);
+}
+
+function verifyNotification() {
+    if(Notification) {
+        Notification.requestPermission().then((response) => {
+            configs.notify = response === 'granted';
+            save();
+        });
+    } else {
+        configs.notify = false;
+        save();
+    }
+}
+
+function newNotification(title, options) {
+    if(configs.notify) {
+        if(Notification.permission !== 'granted') {
+            verifyNotification();
+            return;
+        }
+
+        new Notification(title, options);
+    }
 }
