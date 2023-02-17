@@ -1,7 +1,60 @@
-let timer;
+let stopwatch, configs, stages, stage, timer, todos;
 
 document.addEventListener("DOMContentLoaded", () => {
-    let todos = localStorage.getItem('potodo-todo-list');
+    configs = localStorage.getItem('potodo-configs');
+    if(!configs) {
+        configs = {
+            focus: 25,
+            break: {
+                short: 5,
+                long: 15,
+            },
+            length: 4,
+            auto: true,
+            reset: true
+        };
+    } else {
+        configs = JSON.parse(configs);
+    }
+
+    stages = localStorage.getItem('potodo-stages');
+    if(!stages) {
+        stages = [];
+        for(let i = 1; i <= configs.length; i++) {
+            let array = [];
+    
+            array.push({
+                type: 'focus',
+                minutes: configs.focus,
+            });
+    
+            array.push({
+                type: 'break',
+                minutes: i != configs.length ? configs.break.short : configs.break.long,
+            })
+    
+            stages = stages.concat(array)
+        }
+    } else {
+        stages = JSON.parse(stages);
+    }
+
+    stage = localStorage.getItem('potodo-stage')
+    stage = !stage ? 0 : parseInt(stage);
+
+    timer = localStorage.getItem('potodo-timer');
+    if(!timer) {
+        timer = {
+            minutes: stages[0].minutes < 10 ? `0${stages[0].minutes}` : stages[0].minutes,
+            seconds: "00"
+        }
+    } else {
+        timer = JSON.parse(timer);
+    }
+
+    setPomodoroTimer();
+
+    todos = localStorage.getItem('potodo-todos');
     todos = todos ? JSON.parse(todos) : [];
 
     todos.reverse();
@@ -9,27 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
         addToDo(todo);
     })
 
-    let stages = localStorage.getItem('potodo-pomodoro-stages');
-    stages = stages ? JSON.parse(stages) : configPomodoroStages();
-
-    let stage = localStorage.getItem('potodo-pomodoro-stage')
-    if(!stage)
-        localStorage.setItem('potodo-pomodoro-stage', 0);
-
-    let t = localStorage.getItem('potodo-pomodoro-timer');
-    if(!t) {
-        t = {
-            minutes: stages[0].minutes < 10 ? `0${stages[0].minutes}` : stages[0].minutes,
-            seconds: "00"
-        }
-    } else {
-        t = JSON.parse(t);
-    }
-
-    document.querySelector('.pomodoro-timer-minutes').textContent = t.minutes;
-    document.querySelector('.pomodoro-timer-seconds').textContent = t.seconds;
-
-    // TODO: Verificar estágio atual para modificar o tema
+    setPomodoroTheme();
+    save();
 });
 
 document.querySelector('form#todo-add').addEventListener('submit', (e) => {
@@ -43,7 +77,7 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     }
 
     addToDo({
-        id: `task-${Math.random()}`,
+        id: Math.floor((1 + Math.random()) * 0x10000),
         name: form.name
     });
 
@@ -58,12 +92,7 @@ document.querySelector('form#todo-add input[name="name"]').onkeyup = function() 
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = function() {
-    let t = localStorage.getItem('potodo-pomodoro-timer');
-    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
-    t = !t ? { minutes: stages[0].minutes, seconds: 0 } : JSON.parse(t);
-    
-    startTimer(parseInt(t.minutes) * 60 + parseInt(t.seconds));
+    startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
@@ -71,90 +100,25 @@ document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = fun
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-reset').onclick = function() {
-    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
-    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
     resetTimer(stages[stage].minutes * 60);
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = function() {
-    let stage = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
-    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
     stage = stage > 0 ? stage - 1 : stages.length - 1;
     
-    localStorage.setItem('potodo-pomodoro-stage', stage);
-    
     resetTimer(stages[stage].minutes * 60);
-
-    const body =  document.querySelector('body');
-    body.removeAttribute('class');
-    body.classList.add(`theme-${stages[stage].type}`)
-
-    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
+    setPomodoroTheme();
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
-    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
-    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
     stage = stage < stages.length - 1 ? stage + 1 : 0;
     
-    localStorage.setItem('potodo-pomodoro-stage', stage);
-
     resetTimer(stages[stage].minutes * 60);
-
-    const body =  document.querySelector('body');
-    body.removeAttribute('class');
-    body.classList.add(`theme-${stages[stage].type}`)
-
-    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
-}
-
-function configPomodoroStages() {
-    let configs = localStorage.getItem('potodo-pomodoro-configs');
-
-    if(configs) {
-        configs = JSON.parse(configs);
-    } else {
-        configs = {
-            focus: 25,
-            break: {
-                short: 5,
-                long: 15,
-            },
-            length: 4,
-            auto: true,
-            reset: true
-        };
-
-        localStorage.setItem('potodo-pomodoro-configs', JSON.stringify(configs));
-    }
-
-    let stages = [];
-    for(let i = 1; i <= configs.length; i++) {
-        let stage = [];
-
-        stage.push({
-            type: 'focus',
-            minutes: configs.focus,
-        });
-
-        stage.push({
-            type: 'break',
-            minutes: i != configs.length ? configs.break.short : configs.break.long,
-        })
-
-        stages = stages.concat(stage)
-    }
-
-    localStorage.setItem('potodo-pomodoro-stages', JSON.stringify(stages))
-
-    return stages;
+    setPomodoroTheme();
 }
 
 function saveToDo() {
-    const todos = [];
+    todos = [];
 
     document.querySelectorAll('.todo-list .todo-item').forEach((todo) => {
         todos.push({
@@ -163,8 +127,8 @@ function saveToDo() {
             checked: todo.querySelector('.todo-check').checked
         })
     });
-    
-    localStorage.setItem('potodo-todo-list', JSON.stringify(todos));
+
+    save();
 }
 
 function getFormData(form) {
@@ -216,16 +180,13 @@ function addToDo(task) {
 }
 
 function startTimer(seconds) {
-    if(timer)
+    if(stopwatch)
         return;
 
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
 
-    let   stage  = parseInt(localStorage.getItem('potodo-pomodoro-stage'));
-    const stages = JSON.parse(localStorage.getItem('potodo-pomodoro-stages'));
-
-    timer = setInterval(() => {
+    stopwatch = setInterval(() => {
         seconds --;
 
         if(seconds <= 0) {
@@ -247,46 +208,34 @@ function startTimer(seconds) {
 
             stage = stage < stages.length - 1 ? stage + 1 : 0;
 
-            let s = stages[stage];
-            resetTimer(s.minutes * 60);
-
-            localStorage.setItem('potodo-pomodoro-stage', stage);
-
-            const configs = JSON.parse(localStorage.getItem('potodo-pomodoro-configs'));
+            resetTimer(stages[stage].minutes * 60);
 
             if(!ended && configs.auto)
-                startTimer(s.minutes * 60);
+                startTimer(stages[stage].minutes * 60);
 
             if(ended && configs.reset)
-                startTimer(s.minutes * 60);
+                startTimer(stages[stage].minutes * 60);
 
-            const body =  document.querySelector('body');
-            body.removeAttribute('class');
-            body.classList.add(`theme-${s.type}`)
-
-            document.querySelector('.pomodoro-stage-focus').style.display = 'none';
-            document.querySelector('.pomodoro-stage-break').style.display = 'none';
-            document.querySelector(`.pomodoro-stage-${s.type}`).style.display = 'block';
+            setPomodoroTheme();
         } else {
-            const str = {
+            timer = {
                 minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
                 seconds: `${seconds < 10 ? `0${seconds}` : seconds}`
             };
     
-            document.querySelector('.pomodoro-timer-minutes').textContent = str.minutes;
-            document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
+            setPomodoroTimer();
     
-            localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
-
             const type = stages[stage].type;
-            setTitle(`${type[0].toUpperCase() + type.substring(1)} - ${str.minutes}:${str.seconds}`)
+            setTitle(`${type[0].toUpperCase() + type.substring(1)} - ${timer.minutes}:${timer.seconds}`)
         }
-    }, 1000)
+
+        save();
+    }, 10)
 }
 
 function pauseTimer() {
-    clearInterval(timer);
-    timer = null;
+    clearInterval(stopwatch);
+    stopwatch = null;
 }
 
 function resetTimer(seconds) {
@@ -295,17 +244,35 @@ function resetTimer(seconds) {
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
 
-    const str = {
+    timer = {
         minutes: `${minutes < 10 ? `0${minutes}` : minutes}`,
         seconds: `${seconds < 10 ? `0${seconds}` : seconds}`
     };
 
-    document.querySelector('.pomodoro-timer-minutes').textContent = str.minutes;
-    document.querySelector('.pomodoro-timer-seconds').textContent = str.seconds;
-
-    localStorage.setItem('potodo-pomodoro-timer', JSON.stringify(str))
+    setPomodoroTimer();
 }
 
 function setTitle(title) {
-    document.querySelector('title').textContent = title;
+    // document.querySelector('title').textContent = title;
+}
+
+function setPomodoroTheme() {
+    const body =  document.querySelector('body');
+    body.removeAttribute('class');
+    body.classList.add(`theme-${stages[stage].type}`)
+
+    document.querySelector('.pomodoro-stage span').textContent = stages[stage].type == 'focus' ? 'Foco' : 'Pausa';
+}
+
+function setPomodoroTimer() {
+    document.querySelector('.pomodoro-timer-minutes').textContent = timer.minutes;
+    document.querySelector('.pomodoro-timer-seconds').textContent = timer.seconds;
+}
+
+function save() {
+    localStorage.setItem('potodo-configs', JSON.stringify(configs));
+    localStorage.setItem('potodo-stages', JSON.stringify(stages));
+    localStorage.setItem('potodo-timer', JSON.stringify(timer));
+    localStorage.setItem('potodo-todos', JSON.stringify(todos));
+    localStorage.setItem('potodo-stage', stage);
 }
