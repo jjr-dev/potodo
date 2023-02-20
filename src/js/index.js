@@ -1,6 +1,9 @@
-let stopwatch, configs, stages, stage, timer, todos;
+let stopwatch, configs, stages, stage, timer, todos, history;
 
 document.addEventListener("DOMContentLoaded", () => {
+    history = localStorage.getItem('potodo-history');
+    history = !history ? {} : JSON.parse(history);
+
     configs = localStorage.getItem('potodo-configs');
     if(!configs) {
         configs = {
@@ -12,7 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
             length: 4,
             auto: true,
             reset: true,
-            paused: true
+            paused: true,
+            sound: true,
+            history: {
+                view: 10,
+                register: true
+            }
         };
     } else {
         configs = JSON.parse(configs);
@@ -63,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addToDo(todo);
     })
 
+    setPomodoroHistory();
     setPomodoroTheme();
     save();
 
@@ -100,7 +109,8 @@ document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = func
 
     startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
 
-    newPomodoroSound();
+    if(configs.sound)
+        newPomodoroSound('bell');
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
@@ -249,7 +259,9 @@ function startTimer(seconds) {
             if(ended && configs.reset)
                 startTimer(min * 60);
 
-            newPomodoroSound();
+            if(configs.sound)
+                newPomodoroSound('clock');
+
             setPomodoroTheme();
             togglePaused();
 
@@ -277,12 +289,16 @@ function startTimer(seconds) {
     
             setPomodoroTimer();
     
-            const type = stages[stage].type;
-            setTitle(`${type == 'focus' ? "Foco" : "Intervalo"} - ${timer.minutes}:${timer.seconds}`)
+            if(configs.history.register) {
+                registerPomodoroHistory();
+                updatePomodoroHistory();
+            }
+
+            setTitle(`${stages[stage].type == 'focus' ? "Foco" : "Intervalo"} - ${timer.minutes}:${timer.seconds}`)
         }
 
         save();
-    }, 1000)
+    }, 10)
 }
 
 function pauseTimer() {
@@ -308,7 +324,7 @@ function resetTimer(seconds) {
 }
 
 function setTitle(title) {
-    document.querySelector('title').textContent = title;
+    // document.querySelector('title').textContent = title;
 }
 
 function setPomodoroTheme() {
@@ -331,8 +347,8 @@ function setPomodoroTimer() {
     document.querySelector('.pomodoro-timer-seconds').textContent = timer.seconds;
 }
 
-function newPomodoroSound() {
-    const sound = document.querySelector('audio.pomodoro-sound');
+function newPomodoroSound(type) {
+    const sound = document.querySelector(`audio.pomodoro-sound[data-sound-type="${type}"]`);
     sound.currentTime = 0;
     sound.play();
 }
@@ -342,6 +358,7 @@ function save() {
     localStorage.setItem('potodo-stages', JSON.stringify(stages));
     localStorage.setItem('potodo-timer', JSON.stringify(timer));
     localStorage.setItem('potodo-todos', JSON.stringify(todos));
+    localStorage.setItem('potodo-history', JSON.stringify(history));
     localStorage.setItem('potodo-stage', stage);
 }
 
@@ -366,4 +383,94 @@ function newNotification(title, options) {
 
         new Notification(title, options);
     }
+}
+
+function getCurrentDate() {
+    const date = new Date();
+    const year  = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day   = date.getDate();
+
+    return `${year}-${month < 10 ? `0${month}` : month}-${day}`;
+}
+
+function registerPomodoroHistory() {
+    const date = getCurrentDate();
+
+    const type = stages[stage].type;
+
+    if(!history[date])
+        history[date] = {};
+
+    if(!history[date][type])
+        history[date][type] = 0;
+    
+    history[date][type] ++;
+
+    save();
+}
+
+function organizePomodoroHistory() {
+    const h = [];
+
+    for(let date in history) {
+        h.push({
+            date,
+            ...history[date]
+        })
+    }
+
+    h.sort((a, b) => {
+        return new Date(`${b.date}`) - new Date(`${a.date}`);
+    })
+
+    return h;
+}
+
+function setPomodoroHistory() {
+    organizePomodoroHistory().forEach((item) => {
+        document.querySelector(".pomodoro-history").append(makePomodoroHistoryItem(item));
+    })
+}
+
+function updatePomodoroHistory() {
+    const date  = getCurrentDate();
+    const items = organizePomodoroHistory();
+
+    if(items.length > 0) {
+        const item = items[0];
+
+        const template = document.querySelector(`.pomodoro-history-item[data-history-date="${date}"]`);
+
+        let make = false;
+
+        if(template) {
+            const templateFocus = template.querySelector('.pomodoro-history-timer-focus').textContent
+            const templateBreak = template.querySelector('.pomodoro-history-timer-break').textContent
+
+            if(templateFocus != Math.floor((item.focus || 0) / 60) || templateBreak != Math.floor((item.break || 0) / 60)) {
+                make = true;
+                template.remove();
+            }
+        } else {
+            make = true;
+        }
+
+        if(make)
+            document.querySelector(".pomodoro-history").prepend(makePomodoroHistoryItem(item));
+    }
+}
+
+function makePomodoroHistoryItem(item) {
+    const template = document.querySelector("#pomodoro-history-item-template").cloneNode(true);
+        
+    template.id = "";
+
+    template.setAttribute('data-history-date', item.date);
+    template.querySelector('.pomodoro-history-date').textContent = item.date.split('-').reverse().join('/');
+
+    template.querySelector('.pomodoro-history-timer-focus').textContent = Math.floor((item.focus || 0) / 60)
+    template.querySelector('.pomodoro-history-timer-break').textContent = Math.floor((item.break || 0) / 60)
+
+    return template;
 }

@@ -421,3 +421,49 @@ input[type="text"]:focus {
     height: 1rem;
     margin-top: 0.3rem;
 }
+
+.pomodoro-history {
+    display: flex;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.pomodoro-history .pomodoro-history-item {
+    background-color: var(--color01);
+    border-radius: 0.3rem;
+    padding: 1rem;
+    min-width: 10rem;
+}
+
+.pomodoro-history-item p {
+    color: var(--color09);
+    opacity: 0.75;
+    font-size: 0.8rem;
+}
+
+.pomodoro-history-item .pomodoro-history-timer {
+    font-size: 26px;
+    margin-top: 0.75rem;
+}
+
+.pomodoro-history-item .pomodoro-history-timer-focus {
+    color: var(--color05);
+    font-size: inherit;
+}
+
+.pomodoro-history-item .pomodoro-history-timer-break {
+    color: var(--color07);
+    font-size: inherit;
+}
+
+.pomodoro-history-timer hr {
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+    background-color: transparent;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+#pomodoro-history-item-template {
+    display: none;
+}
