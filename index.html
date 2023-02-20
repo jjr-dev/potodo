@@ -20,6 +20,16 @@
             <img src="./src/svg/trash.svg" alt="Excluir tarefa" title="Excluir tarefa">
         </button>
     </li>
+    <div id="pomodoro-history-item-template" class="pomodoro-history-item">
+        <span class="pomodoro-history-date">{{date}}</span>
+        <h1 class="pomodoro-history-timer">
+            <p>Foco</p>
+            <span class="pomodoro-history-timer-focus">{{focus}}</span> <p>minutos</p>
+            <hr>
+            <p>Intervalo</p>
+            <span class="pomodoro-history-timer-break">{{break}}</span> <p>minutos</p>
+        </h1>
+    </div>
 
     <div class="grids">
         <div class="todo">
@@ -40,7 +50,9 @@
             </div>
         </div>
         <div class="pomodoro">
-            <audio class="pomodoro-sound" src="./src/sounds/bell.mp3"></audio>
+            <audio class="pomodoro-sound" src="./src/sounds/bell.mp3" data-sound-type="bell"></audio>
+            <audio class="pomodoro-sound" src="./src/sounds/clock.mp3" data-sound-type="clock"></audio>
+
             <div class="container">
                 <div class="pomodoro-header">
                     <h1>Pomodoro</h1>
@@ -94,6 +106,8 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+                <div class="pomodoro-history">
                 </div>
             </div>
         </div>
