@@ -111,7 +111,7 @@ document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = func
     startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
 
     if(configs.sound)
-        newPomodoroSound('bell');
+        startSound('bell');
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
@@ -267,7 +267,7 @@ function startTimer(seconds) {
                 startTimer(min * 60);
 
             if(configs.sound)
-                newPomodoroSound('clock');
+                startSound('clock');
 
             setPomodoroTheme();
             togglePaused();
@@ -354,8 +354,8 @@ function setPomodoroTimer() {
     document.querySelector('.pomodoro-timer-seconds').textContent = timer.seconds;
 }
 
-function newPomodoroSound(type) {
-    const sound = document.querySelector(`audio.pomodoro-sound[data-sound-type="${type}"]`);
+function startSound(type) {
+    const sound = document.querySelector(`audio.potodo-sound[data-sound-type="${type}"]`);
     sound.currentTime = 0;
     sound.play();
 }
@@ -506,6 +506,9 @@ function updateToDoProgress(animate = true) {
                     item.classList.remove('animated');
                 }, 1250)
             })
+
+            if(configs.sound)
+                startSound('success');
         }
     }
 }
