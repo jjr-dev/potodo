@@ -98,6 +98,7 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     document.querySelector('form#todo-add button[type="submit"]').disabled = true;
 
     saveToDo();
+    updateToDoProgress(false);
 })
 
 document.querySelector('form#todo-add input[name="name"]').onkeyup = function() {
@@ -209,6 +210,7 @@ function addToDo(task, append = true) {
         if(confirm("Excluir tarefa?")) {
             template.remove();
             saveToDo();
+            updateToDoProgress(false);
         }
     })
 
@@ -490,11 +492,15 @@ function updateToDoProgress(animate = true) {
             checked ++;
     })
 
+    const progress = document.querySelector('.todo .todo-progress');
+    progress.style.display = todos.length == 0 ? 'none' : 'flex';
+
     const percentage = Math.floor(100 / todos.length * checked);
     const str = `${percentage}%`;
 
-    document.querySelector('.todo .todo-progress .todo-progress-bar span').style.width = str;
-    document.querySelector('.todo .todo-progress .todo-progress-percentage').textContent = str;
+
+    progress.querySelector('.todo-progress-bar span').style.width = str;
+    progress.querySelector('.todo-progress-percentage').textContent = str;
 
     if(animate) {
         if(percentage === 100) {
