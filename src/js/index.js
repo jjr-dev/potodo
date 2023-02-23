@@ -66,13 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
     todos = localStorage.getItem('potodo-todos');
     todos = todos ? JSON.parse(todos) : [];
 
-    todos.reverse();
     todos.map((todo) => {
         addToDo(todo);
     })
 
+    setToDoDragAndDrop();
     setPomodoroHistory();
     setPomodoroTheme();
+    updateToDoProgress(false);
     save();
 
     verifyNotification();
@@ -91,7 +92,7 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     addToDo({
         id: Math.floor((1 + Math.random()) * 0x10000),
         name: form.name
-    });
+    }, false);
 
     e.target.querySelector('input[name="name"]').value = "";
     document.querySelector('form#todo-add button[type="submit"]').disabled = true;
@@ -110,7 +111,7 @@ document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = func
     startTimer(parseInt(timer.minutes) * 60 + parseInt(timer.seconds));
 
     if(configs.sound)
-        newPomodoroSound('bell');
+        startSound('bell');
 }
 
 document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
@@ -181,7 +182,7 @@ function getFormData(form) {
     return values;
 }
 
-function addToDo(task) {
+function addToDo(task, append = true) {
     const template = document.querySelector("#todo-item-template").cloneNode(true);
     
     template.id = "";
@@ -212,10 +213,16 @@ function addToDo(task) {
     })
 
     template.querySelector('.todo-check').onchange = () => {
-        saveToDo()
+        saveToDo();
+        updateToDoProgress();
     };
+
+    const list = document.querySelector(".todo-list ul");
     
-    document.querySelector(".todo-list ul").prepend(template);
+    if(append) 
+        list.append(template);
+    else
+        list.prepend(template);
 }
 
 function startTimer(seconds) {
@@ -260,7 +267,7 @@ function startTimer(seconds) {
                 startTimer(min * 60);
 
             if(configs.sound)
-                newPomodoroSound('clock');
+                startSound('clock');
 
             setPomodoroTheme();
             togglePaused();
@@ -347,8 +354,8 @@ function setPomodoroTimer() {
     document.querySelector('.pomodoro-timer-seconds').textContent = timer.seconds;
 }
 
-function newPomodoroSound(type) {
-    const sound = document.querySelector(`audio.pomodoro-sound[data-sound-type="${type}"]`);
+function startSound(type) {
+    const sound = document.querySelector(`audio.potodo-sound[data-sound-type="${type}"]`);
     sound.currentTime = 0;
     sound.play();
 }
@@ -473,4 +480,82 @@ function makePomodoroHistoryItem(item) {
     template.querySelector('.pomodoro-history-timer-break').textContent = Math.floor((item.break || 0) / 60)
 
     return template;
+}
+
+function updateToDoProgress(animate = true) {
+    let checked = 0;
+
+    todos.map((todo) => {
+        if(todo.checked)
+            checked ++;
+    })
+
+    const percentage = Math.floor(100 / todos.length * checked);
+    const str = `${percentage}%`;
+
+    document.querySelector('.todo .todo-progress .todo-progress-bar span').style.width = str;
+    document.querySelector('.todo .todo-progress .todo-progress-percentage').textContent = str;
+
+    if(animate) {
+        if(percentage === 100) {
+            const items = document.querySelectorAll('.todo .todo-list .todo-item');
+            items.forEach((item) => {
+                item.classList.add('animated');
+
+                setTimeout(() => {
+                    item.classList.remove('animated');
+                }, 1250)
+            })
+
+            if(configs.sound)
+                startSound('success');
+        }
+    }
+}
+
+function delay(s) {
+    return new Promise(resolve => setTimeout(resolve, s));
+}
+
+function setToDoDragAndDrop() {
+    const list = document.querySelector(".todo-list ul");
+
+    list.addEventListener("dragover", (e) => {
+        const dragging = document.querySelector(".dragging");
+        const items    = list.querySelectorAll(".todo-item");
+
+        let before;
+        items.forEach((item) => {
+            const box = item.getBoundingClientRect();
+
+            if(e.clientY >= box.y + box.height / 2) before = item;
+        });
+
+        if(before)
+            before.insertAdjacentElement("afterend", dragging);
+        else
+            list.prepend(dragging);
+    })
+
+    list.querySelectorAll('.todo-item').forEach((todo) => {
+        todo.addEventListener("dragstart", (e) => {
+            const element = e.target
+
+            element.classList.add('dragging');
+            
+            const parent = element.parentNode;
+            parent.classList.add('dragging-list');
+        })
+    
+        todo.addEventListener("dragend", (e) => {
+            const element = e.target
+
+            element.classList.remove('dragging');
+
+            const parent = element.parentNode;
+            parent.classList.remove('dragging-list');
+
+            saveToDo();
+        })
+    });
 }

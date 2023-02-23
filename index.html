@@ -10,7 +10,11 @@
     <title>PoToDo</title>
 </head>
 <body class="theme-focus">
-    <li id="todo-item-template" class="todo-item">
+    <audio class="potodo-sound" src="./src/sounds/bell.mp3" data-sound-type="bell"></audio>
+    <audio class="potodo-sound" src="./src/sounds/clock.mp3" data-sound-type="clock"></audio>
+    <audio class="potodo-sound" src="./src/sounds/success.mp3" data-sound-type="success"></audio>
+
+    <li id="todo-item-template" class="todo-item" draggable="true">
         <input type="checkbox" name="" id="" class="todo-check">
         <label for="" class="todo-name"><span>{{name}}</span></label>
         <button class="todo-btn btn-center btn todo-play" title="Iniciar tarefa">
@@ -44,15 +48,16 @@
                             Criar
                         </button>
                     </form>
+                    <div class="todo-progress">
+                        <span class="todo-progress-percentage">0%</span>
+                        <div class="todo-progress-bar"><span></span></div>
+                    </div>
                     <ul>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="pomodoro">
-            <audio class="pomodoro-sound" src="./src/sounds/bell.mp3" data-sound-type="bell"></audio>
-            <audio class="pomodoro-sound" src="./src/sounds/clock.mp3" data-sound-type="clock"></audio>
-
             <div class="container">
                 <div class="pomodoro-header">
                     <h1>Pomodoro</h1>
