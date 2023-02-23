@@ -336,8 +336,8 @@ function setPomodoroTheme() {
 }
 
 function togglePaused() {
-    document.querySelector('.pomodoro-actions .pomodoro-action-pause').style.display = configs.paused ? 'none' : 'block';
-    document.querySelector('.pomodoro-actions .pomodoro-action-play').style.display  = configs.paused ? 'block' : 'none';
+    document.querySelector('.pomodoro-actions .pomodoro-action-pause').style.display = configs.paused ? 'none' : 'flex';
+    document.querySelector('.pomodoro-actions .pomodoro-action-play').style.display  = configs.paused ? 'flex' : 'none';
 
     save();
 }

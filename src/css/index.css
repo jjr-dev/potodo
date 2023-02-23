@@ -120,7 +120,6 @@ h1 {
 .todo .todo-list ul li .todo-btn {
     border: 0;
     background-color: transparent;
-    padding: 0.2rem 0;
     text-align: center;
     width: 1.6rem;
     height: 1.6rem;
@@ -130,7 +129,6 @@ h1 {
     border-radius: 50%;
     transform: translate(300%);
     transition: .3s;
-    font-size: 0;
 }
 
 .todo .todo-list ul li:hover .todo-btn {
@@ -151,13 +149,12 @@ h1 {
 
 .todo .todo-list ul li .todo-btn.todo-trash {
     background-color: var(--color09);
-    padding: 0.3rem 0;
 }
 
-.todo .todo-list ul li .todo-btn.todo-trash img {
-    width: 0.8rem;
+.todo .todo-list ul li .todo-btn svg {
+    width: 0.75rem;
+    fill: var(--color01)
 }
-
 
 .todo .todo-list ul li .todo-check {
     position: relative;
@@ -232,6 +229,13 @@ h1 {
     cursor: pointer;
 }
 
+.btn.btn-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
 .theme-focus .btn {
     background-color: var(--color05);
 }
@@ -274,6 +278,20 @@ input[type="text"]:focus {
 
 .pomodoro-header {
     margin-bottom: 1.7rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pomodoro-header .btn {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}
+
+.pomodoro-header .btn svg {
+    fill: var(--color01);
+    width: 1.1rem;
+    height: 1.1rem;
 }
 
 .pomodoro-stopwatch {
@@ -366,6 +384,7 @@ input[type="text"]:focus {
 .pomodoro-actions {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
     margin-top: 0.5rem;
 }
 
@@ -375,26 +394,24 @@ input[type="text"]:focus {
 
 .pomodoro-actions .btn svg {
     fill: var(--color01);
-    font-size: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-top: 0.4rem;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.pomodoro-actions .pomodoro-action-previous, .pomodoro-actions .pomodoro-action-next {
+    width: 75%;
 }
 
 .pomodoro-actions .pomodoro-action-pause {
     display: none;
 }
 
-.pomodoro-actions .pomodoro-action-play svg, .pomodoro-actions .pomodoro-action-pause svg {
-    transform: scale(1.5);
-}
-
 .pomodoro-actions .pomodoro-action-reset {
     position: absolute;
-    right: 5px;
-    top: 5px;
-    width: 30px;
-    height: 30px;
+    right: 0.4rem;
+    top: 0.4rem;
+    width: 2rem;
+    height: 2rem;
     padding: 0;
 }
 
@@ -419,7 +436,6 @@ input[type="text"]:focus {
 .pomodoro-actions .pomodoro-action-reset svg {
     width: 1rem;
     height: 1rem;
-    margin-top: 0.3rem;
 }
 
 .pomodoro-history {
@@ -428,6 +444,7 @@ input[type="text"]:focus {
     flex-wrap: wrap;
     gap: 15px;
 }
+
 .pomodoro-history .pomodoro-history-item {
     background-color: var(--color01);
     border-radius: 0.3rem;
