@@ -128,7 +128,7 @@ h1 {
     cursor: pointer;
     margin-left: 0.35rem;
     border-radius: 50%;
-    transform: translate(300%);
+    transform: translate(500%);
     transition: .3s;
 }
 
@@ -138,6 +138,21 @@ h1 {
 
 .todo .todo-list ul li .todo-btn:hover {
     transform: scale(1.25);
+}
+
+.todo .todo-list ul li .todo-btn.todo-play {
+    position: relative;
+    margin-left: 0.75rem;
+}
+
+.todo .todo-list ul li .todo-btn.todo-play::before {
+    content: "";
+    width: 0.05rem;
+    height: 80%;
+    background-color: var(--color10);
+    position: absolute;
+    left: -0.35rem;
+    top: 10%;
 }
 
 .theme-focus .todo .todo-list ul li .todo-btn.todo-play {
@@ -151,6 +166,11 @@ h1 {
 .todo .todo-list ul li .todo-btn.todo-trash {
     background-color: var(--color09);
 }
+
+.todo .todo-list ul li .todo-btn.todo-archive {
+    background-color: var(--color10);
+}
+
 
 .todo .todo-list ul li .todo-btn svg {
     width: 0.65rem;
