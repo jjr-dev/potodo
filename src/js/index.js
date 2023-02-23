@@ -66,13 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
     todos = localStorage.getItem('potodo-todos');
     todos = todos ? JSON.parse(todos) : [];
 
-    todos.reverse();
     todos.map((todo) => {
         addToDo(todo);
     })
 
     setPomodoroHistory();
     setPomodoroTheme();
+    updateToDoProgress(false);
     save();
 
     verifyNotification();
@@ -91,7 +91,7 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     addToDo({
         id: Math.floor((1 + Math.random()) * 0x10000),
         name: form.name
-    });
+    }, false);
 
     e.target.querySelector('input[name="name"]').value = "";
     document.querySelector('form#todo-add button[type="submit"]').disabled = true;
@@ -167,6 +167,8 @@ function saveToDo() {
         })
     });
 
+    updateToDoProgress();
+
     save();
 }
 
@@ -181,7 +183,7 @@ function getFormData(form) {
     return values;
 }
 
-function addToDo(task) {
+function addToDo(task, append = true) {
     const template = document.querySelector("#todo-item-template").cloneNode(true);
     
     template.id = "";
@@ -215,7 +217,10 @@ function addToDo(task) {
         saveToDo()
     };
     
-    document.querySelector(".todo-list ul").prepend(template);
+    if(append) 
+        document.querySelector(".todo-list ul").append(template);
+    else
+        document.querySelector(".todo-list ul").prepend(template);
 }
 
 function startTimer(seconds) {
@@ -473,4 +478,36 @@ function makePomodoroHistoryItem(item) {
     template.querySelector('.pomodoro-history-timer-break').textContent = Math.floor((item.break || 0) / 60)
 
     return template;
+}
+
+function updateToDoProgress(animate = true) {
+    let checked = 0;
+
+    todos.map((todo) => {
+        if(todo.checked)
+            checked ++;
+    })
+
+    const percentage = Math.floor(100 / todos.length * checked);
+    const str = `${percentage}%`;
+
+    document.querySelector('.todo .todo-progress .todo-progress-bar span').style.width = str;
+    document.querySelector('.todo .todo-progress .todo-progress-percentage').textContent = str;
+
+    if(animate) {
+        if(percentage === 100) {
+            const items = document.querySelectorAll('.todo .todo-list .todo-item');
+            items.forEach((item) => {
+                item.classList.add('animated');
+
+                setTimeout(() => {
+                    item.classList.remove('animated');
+                }, 1250)
+            })
+        }
+    }
+}
+
+function delay(s) {
+    return new Promise(resolve => setTimeout(resolve, s));
 }
