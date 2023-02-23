@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addToDo(todo);
     })
 
+    setToDoDragAndDrop();
     setPomodoroHistory();
     setPomodoroTheme();
     updateToDoProgress(false);
@@ -167,8 +168,6 @@ function saveToDo() {
         })
     });
 
-    updateToDoProgress();
-
     save();
 }
 
@@ -214,13 +213,16 @@ function addToDo(task, append = true) {
     })
 
     template.querySelector('.todo-check').onchange = () => {
-        saveToDo()
+        saveToDo();
+        updateToDoProgress();
     };
+
+    const list = document.querySelector(".todo-list ul");
     
     if(append) 
-        document.querySelector(".todo-list ul").append(template);
+        list.append(template);
     else
-        document.querySelector(".todo-list ul").prepend(template);
+        list.prepend(template);
 }
 
 function startTimer(seconds) {
@@ -510,4 +512,47 @@ function updateToDoProgress(animate = true) {
 
 function delay(s) {
     return new Promise(resolve => setTimeout(resolve, s));
+}
+
+function setToDoDragAndDrop() {
+    const list = document.querySelector(".todo-list ul");
+
+    list.addEventListener("dragover", (e) => {
+        const dragging = document.querySelector(".dragging");
+        const items    = list.querySelectorAll(".todo-item");
+
+        let before;
+        items.forEach((item) => {
+            const box = item.getBoundingClientRect();
+
+            if(e.clientY >= box.y + box.height / 2) before = item;
+        });
+
+        if(before)
+            before.insertAdjacentElement("afterend", dragging);
+        else
+            list.prepend(dragging);
+    })
+
+    list.querySelectorAll('.todo-item').forEach((todo) => {
+        todo.addEventListener("dragstart", (e) => {
+            const element = e.target
+
+            element.classList.add('dragging');
+            
+            const parent = element.parentNode;
+            parent.classList.add('dragging-list');
+        })
+    
+        todo.addEventListener("dragend", (e) => {
+            const element = e.target
+
+            element.classList.remove('dragging');
+
+            const parent = element.parentNode;
+            parent.classList.remove('dragging-list');
+
+            saveToDo();
+        })
+    });
 }

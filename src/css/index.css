@@ -9,6 +9,7 @@
     --color07: #3eb99e;
     --color08: #1aa587;
     --color09: #313131;
+    --color10: #a7a7a7;
 }
 
 /* Font Import */
@@ -80,7 +81,7 @@ h1 {
     border: 0;
 }
 
-.todo .todo-list ul li:hover {
+.todo .todo-list ul:not(.dragging-list) li:hover {
     background-color: #fff;
     box-shadow: 0 0 0.6rem 0 rgba(0,0,0,0.1);
     border-radius: 0.3rem;
@@ -98,7 +99,7 @@ h1 {
 }
 
 .todo .todo-list ul li .todo-check:checked ~ .todo-name span {
-    color: var(--color04);
+    color: var(--color10);
 }
 
 .todo .todo-list ul li .todo-check:checked ~ .todo-name span:before {
@@ -108,7 +109,7 @@ h1 {
 .todo .todo-list ul li .todo-check ~ .todo-name span:before {
     content: "";
     height: 0.125rem;
-    background-color: var(--color04);
+    background-color: var(--color10);
     display: block;
     position: absolute;
     top: 50%;
@@ -131,7 +132,7 @@ h1 {
     transition: .3s;
 }
 
-.todo .todo-list ul li:hover .todo-btn {
+.todo .todo-list ul:not(.dragging-list) li:hover .todo-btn {
     transform: translate(0);
 }
 
@@ -233,6 +234,10 @@ h1 {
     100% {
         transform: rotate(0);
     }
+}
+
+.todo .todo-list ul li.dragging {
+    opacity: 0.5;
 }
 
 #todo-item-template {
