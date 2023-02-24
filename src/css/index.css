@@ -76,6 +76,7 @@ h1 {
     border-bottom: 1px solid var(--color03);
     overflow: hidden;
     border-radius: 0.3rem;
+    position: relative;
 }
 
 .todo .todo-list ul li:last-child {
@@ -134,6 +135,32 @@ h1 {
 
 .todo .todo-list ul:not(.dragging-list) li:hover .todo-btn {
     transform: translate(0);
+}
+
+.todo .todo-list ul li[archived="true"] .todo-play {
+    display: none;
+}
+
+.todo .todo-list ul li span.icon-todo-archived {
+    display: none;
+}
+
+.todo .todo-list ul li[archived="true"] span.icon-todo-archived {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+}
+
+.todo .todo-list ul li[archived="true"] span.icon-todo-archived svg {
+    fill: var(--color10);
+    width: 0.8rem;
+    transition: .2s;
+}
+
+.todo .todo-list ul li[archived="true"]:hover span.icon-todo-archived svg {
+    opacity: 0;
 }
 
 .todo .todo-list ul li .todo-btn:hover {
