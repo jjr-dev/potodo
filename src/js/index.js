@@ -98,6 +98,7 @@ document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     document.querySelector('form#todo-add button[type="submit"]').disabled = true;
 
     saveToDo();
+    updateToDoProgress(false);
 })
 
 document.querySelector('form#todo-add input[name="name"]').onkeyup = function() {
@@ -164,7 +165,8 @@ function saveToDo() {
         todos.push({
             id: todo.querySelector('.todo-check').id,
             name: todo.querySelector('.todo-name').textContent,
-            checked: todo.querySelector('.todo-check').checked
+            checked: todo.querySelector('.todo-check').checked,
+            archived: todo.getAttribute('archived')
         })
     });
 
@@ -186,7 +188,7 @@ function addToDo(task, append = true) {
     const template = document.querySelector("#todo-item-template").cloneNode(true);
     
     template.id = "";
-    template.querySelector(".todo-name span").textContent = task.name
+    template.querySelector(".todo-name").textContent = task.name
 
     if(task.id) {
         template.querySelector(".todo-name").setAttribute('for', task.id);
@@ -197,6 +199,13 @@ function addToDo(task, append = true) {
     
     if(task.checked)
         template.querySelector('.todo-check').checked = true;
+
+    if(task.archived) {
+        const archived = task.archived === 'true';
+        template.setAttribute('archived', archived);
+
+        template.querySelector('.todo-archive').title = archived ? "Desarquivar tarefa" : "Arquivar tarefa";
+    }
 
     template.querySelector('.todo-name').onclick = function(e) {
         e.preventDefault();
@@ -209,7 +218,26 @@ function addToDo(task, append = true) {
         if(confirm("Excluir tarefa?")) {
             template.remove();
             saveToDo();
+            updateToDoProgress(false);
         }
+    })
+
+    template.querySelector(".todo-btn.todo-archive").addEventListener("click", () => {
+        const archived = template.getAttribute('archived') === 'true';
+
+        if(archived) {
+            if(confirm("Desarquivar tarefa?")) {
+                template.removeAttribute('archived');
+                saveToDo();
+            }
+        } else {
+            if(confirm("Arquivar tarefa?")) {
+                template.setAttribute('archived', true);
+                saveToDo();
+            }
+        }
+
+        template.querySelector('.todo-archive').title = archived ? "Arquivar tarefa" : "Desarquivar tarefa";
     })
 
     template.querySelector('.todo-check').onchange = () => {
@@ -490,11 +518,15 @@ function updateToDoProgress(animate = true) {
             checked ++;
     })
 
+    const progress = document.querySelector('.todo .todo-progress');
+    progress.style.display = todos.length == 0 ? 'none' : 'flex';
+
     const percentage = Math.floor(100 / todos.length * checked);
     const str = `${percentage}%`;
 
-    document.querySelector('.todo .todo-progress .todo-progress-bar span').style.width = str;
-    document.querySelector('.todo .todo-progress .todo-progress-percentage').textContent = str;
+
+    progress.querySelector('.todo-progress-bar span').style.width = str;
+    progress.querySelector('.todo-progress-percentage').textContent = str;
 
     if(animate) {
         if(percentage === 100) {
