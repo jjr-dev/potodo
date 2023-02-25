@@ -258,12 +258,16 @@ function addToDo(task, append = true) {
             }
         }
 
+        updateToDoProgress(false);
+
         template.querySelector('.todo-archive').title = archived ? "Arquivar tarefa" : "Desarquivar tarefa";
     })
 
-    template.querySelector('.todo-check').onchange = () => {
+    template.querySelector('.todo-check').onchange = (e) => {
         saveToDo();
-        updateToDoProgress();
+
+        if(!e.target.parentNode.getAttribute('archived'))
+            updateToDoProgress();
     };
 
     template.addEventListener("dragstart", (e) => {
@@ -576,7 +580,7 @@ function updateToDoProgress(animate = true) {
 
     if(animate) {
         if(percentage === 100) {
-            const items = document.querySelectorAll('.todo .todo-list .todo-item');
+            const items = document.querySelectorAll('.todo .todo-list .todo-item:not([archived])');
             items.forEach((item) => {
                 item.classList.add('animated');
 
