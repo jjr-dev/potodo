@@ -79,6 +79,27 @@ document.addEventListener("DOMContentLoaded", () => {
     verifyNotification();
 });
 
+document.querySelector('.todo .todo-header .dropmenu .todo-view-archived').addEventListener('click', (e) => {
+    const list = document.querySelector('.todo .todo-list ul');
+
+    if(list.getAttribute('archiveds') === 'true') {
+        e.target.textContent = 'Exibir tarefas arquivadas';
+        list.setAttribute('archiveds', 'false');
+    } else {
+        e.target.textContent = 'Ocultar tarefas arquivadas';
+        list.setAttribute('archiveds', 'true');
+    }
+})
+
+document.querySelector('.todo .todo-header .btn-todo-toggle-archiveds').addEventListener('click', () => {
+    const submenu = document.querySelector('.todo .todo-header .btn-todo-toggle-archiveds .dropmenu');
+
+    if(submenu.classList.contains('dropmenu-opened'))
+        submenu.classList.remove('dropmenu-opened')
+    else
+        submenu.classList.add('dropmenu-opened')
+})
+
 document.querySelector('form#todo-add').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -105,7 +126,7 @@ document.querySelector('form#todo-add input[name="name"]').onkeyup = function() 
     document.querySelector('form#todo-add button[type="submit"]').disabled = this.value.length == 0;
 }
 
-document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = function() {
+document.querySelector('.pomodoro-actions .pomodoro-action-play').addEventListener("click", () => {
     configs.paused = false;
     togglePaused();
 
@@ -113,20 +134,20 @@ document.querySelector('.pomodoro-actions .pomodoro-action-play').onclick = func
 
     if(configs.sound)
         startSound('bell');
-}
+})
 
-document.querySelector('.pomodoro-actions .pomodoro-action-pause').onclick = function() {
+document.querySelector('.pomodoro-actions .pomodoro-action-pause').addEventListener("click", () => {
     configs.paused = true;
     togglePaused();
     
     pauseTimer();
-}
+})
 
-document.querySelector('.pomodoro-actions .pomodoro-action-reset').onclick = function() {
+document.querySelector('.pomodoro-actions .pomodoro-action-reset').addEventListener("click", () => {
     resetTimer(stages[stage].minutes * 60);
-}
+})
 
-document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = function() {
+document.querySelector('.pomodoro-actions .pomodoro-action-previous').addEventListener("click", () => {
     stage = stage > 0 ? stage - 1 : stages.length - 1;
 
     timer = {
@@ -140,9 +161,9 @@ document.querySelector('.pomodoro-actions .pomodoro-action-previous').onclick = 
     pauseTimer();
 
     save();
-}
+})
 
-document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = function() {
+document.querySelector('.pomodoro-actions .pomodoro-action-next').addEventListener("click", () => {
     stage = stage < stages.length - 1 ? stage + 1 : 0;
 
     timer = {
@@ -156,7 +177,7 @@ document.querySelector('.pomodoro-actions .pomodoro-action-next').onclick = func
     pauseTimer();
 
     save();
-}
+})
 
 function saveToDo() {
     todos = [];
@@ -207,12 +228,12 @@ function addToDo(task, append = true) {
         template.querySelector('.todo-archive').title = archived ? "Desarquivar tarefa" : "Arquivar tarefa";
     }
 
-    template.querySelector('.todo-name').onclick = function(e) {
+    template.querySelector('.todo-name').addEventListener("click", (e) => {
         e.preventDefault();
 
         // Informações sobre a tarefa em breve
         console.log(this);
-    }
+    })
 
     template.querySelector(".todo-btn.todo-trash").addEventListener("click", () => {
         if(confirm("Excluir tarefa?")) {

@@ -61,6 +61,24 @@ h1 {
 
 .todo .todo-header {
     margin-bottom: 1.7rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo .todo-header .btn {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}
+
+.todo .todo-header .btn svg {
+    fill: var(--color01);
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.todo .todo-header .btn-todo-toggle-archiveds {
+    position: relative;
 }
 
 .todo .todo-list ul {
@@ -79,8 +97,12 @@ h1 {
     position: relative;
 }
 
-.todo .todo-list ul li:last-child {
-    border: 0;
+.todo .todo-list ul[archiveds="false"] li[archived="true"] {
+    display: none;
+}
+
+.todo .todo-list ul[archiveds="true"] li[archived="true"] {
+    display: flex;
 }
 
 .todo .todo-list ul:not(.dragging-list) li:hover {
@@ -604,4 +626,50 @@ input[type="text"]:focus {
 
 .theme-focus .todo .todo-progress .todo-progress-bar span {
     background-color: var(--color05);
+}
+
+/* DropMenu */
+.dropmenu {
+    position: absolute;
+    top: 100%;
+    background-color: var(--color01);
+    box-shadow: 0 0 0.6rem 0 rgba(0,0,0,0.1);
+    z-index: 9;
+    list-style: none;
+    color: var(--color09);
+    border-radius: 0.3rem;
+    cursor: default;
+    height: 0;
+    overflow: hidden;
+    transition: .2s;
+    opacity: 0;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.dropmenu li {
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    color: var(--color10);
+    transition: .2s;
+    cursor: pointer;
+}
+
+.dropmenu li:last-child {
+    margin: 0;
+}
+
+.dropmenu li:hover {
+    color: var(--color09);
+}
+
+.dropmenu.dropmenu-opened {
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    opacity: 1;
+}
+
+.dropmenu.dropmenu-right {
+    right: 0;
+    text-align: right;
 }
