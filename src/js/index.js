@@ -266,6 +266,26 @@ function addToDo(task, append = true) {
         updateToDoProgress();
     };
 
+    template.addEventListener("dragstart", (e) => {
+        const element = e.target
+
+        element.classList.add('dragging');
+        
+        const parent = element.parentNode;
+        parent.classList.add('dragging-list');
+    })
+
+    template.addEventListener("dragend", (e) => {
+        const element = e.target
+
+        element.classList.remove('dragging');
+
+        const parent = element.parentNode;
+        parent.classList.remove('dragging-list');
+
+        saveToDo();
+    })
+
     const list = document.querySelector(".todo-list ul");
     
     if(append) 
@@ -533,16 +553,21 @@ function makePomodoroHistoryItem(item) {
 
 function updateToDoProgress(animate = true) {
     let checked = 0;
+    let total   = 0;
 
     todos.map((todo) => {
-        if(todo.checked)
-            checked ++;
+        if(!todo.archived) {
+            total ++;
+
+            if(todo.checked)
+                checked ++;
+        }
     })
 
     const progress = document.querySelector('.todo .todo-progress');
-    progress.style.display = todos.length == 0 ? 'none' : 'flex';
+    progress.style.display = total == 0 ? 'none' : 'flex';
 
-    const percentage = Math.floor(100 / todos.length * checked);
+    const percentage = Math.floor(100 / total * checked);
     const str = `${percentage}%`;
 
 
@@ -575,7 +600,13 @@ function setToDoDragAndDrop() {
 
     list.addEventListener("dragover", (e) => {
         const dragging = document.querySelector(".dragging");
-        const items    = list.querySelectorAll(".todo-item");
+        const all      = list.querySelectorAll(".todo-item");
+
+        const items = [];
+        all.forEach((item) => {
+            if(window.getComputedStyle(item).display !== 'none')
+                items.push(item);
+        })
 
         let before;
         items.forEach((item) => {
@@ -583,32 +614,10 @@ function setToDoDragAndDrop() {
 
             if(e.clientY >= box.y + box.height / 2) before = item;
         });
-
+        
         if(before)
             before.insertAdjacentElement("afterend", dragging);
         else
             list.prepend(dragging);
     })
-
-    list.querySelectorAll('.todo-item').forEach((todo) => {
-        todo.addEventListener("dragstart", (e) => {
-            const element = e.target
-
-            element.classList.add('dragging');
-            
-            const parent = element.parentNode;
-            parent.classList.add('dragging-list');
-        })
-    
-        todo.addEventListener("dragend", (e) => {
-            const element = e.target
-
-            element.classList.remove('dragging');
-
-            const parent = element.parentNode;
-            parent.classList.remove('dragging-list');
-
-            saveToDo();
-        })
-    });
 }
