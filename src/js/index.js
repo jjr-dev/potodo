@@ -187,7 +187,9 @@ function saveToDo() {
             id: todo.querySelector('.todo-check').id,
             name: todo.querySelector('.todo-name').textContent,
             checked: todo.querySelector('.todo-check').checked,
-            archived: todo.getAttribute('archived')
+            archived: todo.getAttribute('archived'),
+            description: todo.getAttribute('description'),
+            created_at: todo.getAttribute('created_at')
         })
     });
 
@@ -210,6 +212,12 @@ function addToDo(task, append = true) {
     
     template.id = "";
     template.querySelector(".todo-name").textContent = task.name
+    template.querySelector(".todo-name").setAttribute('title', task.name);
+
+    template.setAttribute('created_at', getCurrentDate());
+
+    if(task.description)
+        template.setAttribute('description', task.description);
 
     if(task.id) {
         template.querySelector(".todo-name").setAttribute('for', task.id);
@@ -227,13 +235,6 @@ function addToDo(task, append = true) {
 
         template.querySelector('.todo-archive').title = archived ? "Desarquivar tarefa" : "Arquivar tarefa";
     }
-
-    template.querySelector('.todo-name').addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Informações sobre a tarefa em breve
-        console.log(this);
-    })
 
     template.querySelector(".todo-btn.todo-trash").addEventListener("click", () => {
         if(confirm("Excluir tarefa?")) {
@@ -290,12 +291,85 @@ function addToDo(task, append = true) {
         saveToDo();
     })
 
+    template.querySelector('.todo-name').addEventListener("click", (e) => {
+        e.preventDefault();
+
+        task = getToDo(task.id);
+
+        const modal = document.querySelector('.modal#todo-task-infos');
+        modal.style.display = 'block';
+
+        const content = modal.querySelector('.modal-content');
+
+        const title = content.querySelector('.modal-header .modal-title');
+        title.textContent = task.name;
+        title.setAttribute('title', task.name);
+
+        const description = content.querySelector('.modal-body .task-description');
+        description.innerHTML = task.description.replace(/\n/g, '<br>');
+
+        const created_at = content.querySelector('.modal-header .modal-legend .task-created-at');
+        created_at.textContent = task.created_at.split('-').reverse().join('/');
+        
+        const edit = content.querySelector('.modal-body .task-description-edit');
+
+        modal.onclick = (e) => {
+            if(!content.contains(e.target)) {
+                modal.style.display = 'none';
+                description.style.display = 'block';
+                edit.style.display = 'none';
+            }
+        }
+        
+        description.onclick = () => {
+            description.style.display = 'none';
+            edit.style.display = 'block';
+
+            const textarea = edit.querySelector('textarea');
+            textarea.value = task.description.replace(/<br>/g, '\n');
+            textarea.focus();
+            autoTextareaResize(textarea);
+
+            textarea.onkeyup = () => {
+                autoTextareaResize(textarea);
+            }
+
+            edit.querySelector('button[type="submit"]').onclick= () => {
+                description.style.display = 'block';
+                edit.style.display = 'none';
+
+                let desc = textarea.value;
+                template.setAttribute('description', desc);
+
+                desc = desc.replace(/\n/g, '<br>');
+                description.innerHTML = desc;
+
+                saveToDo();
+            }
+
+            edit.querySelector('button:not([type="submit"])').onclick= () => {
+                description.style.display = 'block';
+                edit.style.display = 'none';
+            }
+
+        }
+    })
+
     const list = document.querySelector(".todo-list ul");
     
     if(append) 
         list.append(template);
     else
         list.prepend(template);
+}
+
+function autoTextareaResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
+function getToDo(id) {
+    return id ? todos.find((i) => i.id == id) : todos;
 }
 
 function startTimer(seconds) {

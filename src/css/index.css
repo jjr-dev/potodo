@@ -345,12 +345,21 @@ h1 {
     background-color: var(--color07);
 }
 
+.btn.btn-light {
+    background-color: var(--color03);
+    color: var(--color09);
+}
+
 .theme-focus .btn:not(:disabled):hover {
     background-color: var(--color06);
 }
 
 .theme-break .btn:not(:disabled):hover {
     background-color: var(--color08);
+}
+
+.btn.btn-light:not(:disabled):hover {
+    background-color: var(--color04);
 }
 
 .btn:disabled {
@@ -672,4 +681,113 @@ input[type="text"]:focus {
 .dropmenu.dropmenu-right {
     right: 0;
     text-align: right;
+}
+
+/* Modal */
+.modal {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    display: none;
+}
+
+.modal-offlight {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--color03);
+    padding: 2rem;
+    border-radius: 0.3rem;
+    margin-top: 3.5rem;
+    margin-bottom: 5rem;
+    min-width: 40%;
+    position: relative;
+}
+
+.modal-header .modal-legend {
+    font-size: 0.9rem;
+    color: var(--color10);
+    font-weight: 400;
+    margin-top: 0.25rem;
+}
+
+.modal-header .modal-legend b {
+    font-weight: 500;
+}
+
+.modal-content hr {
+    border: 0;
+    border-top: 1px solid var(--color04);
+    background-color: transparent;
+    margin: 0.75rem 0;
+}
+
+.modal-body h1 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.theme-focus .modal-body h1 {
+    color: var(--color05);
+}
+
+.theme-break .modal-body h1 {
+    color: var(--color07);
+}
+
+.theme-focus .modal-header .modal-title {
+    color: var(--color05);
+}
+
+.theme-break .modal-header .modal-title {
+    color: var(--color07);
+}
+
+/* Modal Task Infos */
+.task-description {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    background-color: var(--color02);
+    min-height: 4rem;
+}
+
+.task-description-edit {
+    text-align: right;
+}
+
+.task-description-edit textarea {
+    width: 100%;
+    resize: none;
+    border: 1px solid var(--color04);
+    border-radius: 0.3rem;
+    transition: .2s;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    min-height: 6rem;
+}
+
+.task-description-edit textarea:focus {
+    outline: 0;
+}
+
+.task-description-edit .btn {
+    font-size: 0.9rem;
+}
+
+.theme-focus .task-description-edit textarea:focus {
+    border-color: var(--color05);
+}
+
+.theme-break .task-description-edit textarea:focus {
+    border-color: var(--color07);
 }

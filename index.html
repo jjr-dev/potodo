@@ -13,6 +13,33 @@
     <audio class="potodo-sound" src="./src/sounds/bell.mp3" data-sound-type="bell"></audio>
     <audio class="potodo-sound" src="./src/sounds/clock.mp3" data-sound-type="clock"></audio>
     <audio class="potodo-sound" src="./src/sounds/success.mp3" data-sound-type="success"></audio>
+    
+    <div class="modal" id="todo-task-infos">
+        <div class="modal-offlight">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title">{{task_name}}</h1>
+                    <h2 class="modal-legend">Tarefa criada em <b class="task-created-at">{{task_created_at}}</b></h2>
+                </div>
+                <hr>
+                <div class="modal-body">
+                    <h1>Descrição</h1>
+                    <div class="task-description">
+                        {{task_description}}
+                    </div>
+                    <div class="task-description-edit" style="display: none">
+                        <textarea cols="30" rows="5">{{task_description}}</textarea>
+                        <button class="btn btn-light">
+                            Cancelar
+                        </button>
+                        <button class="btn" type="submit">
+                            Salvar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <li id="todo-item-template" class="todo-item" draggable="true">
         <span class="icon-todo-archived">
